@@ -1,1 +1,170 @@
-<!doctype html> <html lang="en"> <head> <meta charset="utf-8"> <meta name="robots" content="noindex"> <meta name="viewport" content="width=device-width,initial-scale=1"> <title>Admin — Setup</title> <style> body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;padding:1rem;background:#f7f7f8;color:#111} h1{font-size:1.1rem;margin:0 0 1rem;text-align:center} #login{max-width:520px;margin:1.5rem auto;padding:1rem;border:1px solid #e2e2e2;border-radius:8px;background:#fff} label{display:block;margin-bottom:.75rem} input[type=password]{width:100%;padding:.5rem;border:1px solid #ccc;border-radius:4px} button{margin-top:.5rem;padding:.45rem .75rem;border-radius:4px;border:1px solid #bbb;background:#f3f3f3;cursor:pointer} #frameContainer{max-width:100%;margin:1rem auto} iframe{width:100%;height:70vh;border:1px solid #ddd;border-radius:6px} .hidden{display:none} p.note{color:#666;font-size:0.9rem;margin-top:.75rem} #controls{max-width:520px;margin:0.5rem auto;text-align:center} </style> </head> <body> <h1>Admin — Setup</h1> <div id="login"> <label for="pw">Password: <input id="pw" type="password" autocomplete="current-password" placeholder="Enter admin password"> </label> <div> <button id="go">Enter</button> <button id="clear" style="display:none">Logout</button> </div> <p class="note">This admin page is intentionally not linked from the site. It uses client-side password gating only — NOT secure. Replace the PASSWORD constant in this file before use.</p> </div> <div id="frameContainer" class="hidden"> <div id="controls" class="hidden"> <button id="connectBtn">Connect with GitHub</button> <button id="saveBtn" disabled>Save to GitHub</button> <span id="status" style="margin-left:.5rem;color:#666"></span> </div> <iframe id="setupFrame" src="" title="Setup"></iframe> </div> <script> /* OAuth flow (popup + code exchange): - Register an OAuth App with redirect_uri pointing to /admin/oauth_callback.html - Edit CLIENT_ID and REDIRECT_URI below to match your OAuth App / host - Backend endpoints: POST /auth/exchange { code } -> exchanges code, stores token in server session GET /auth/status -> returns { authenticated: true/false, user: {login} } POST /save-config -> server-side commit using token in session - The Setup iframe should provide a way to supply the JSON config to its parent, for example: window.parent.postMessage({ type: 'CONFIG_JSON', json: yourConfigObject }, '*') Or respond to a request message from parent: { type: 'REQUEST_CONFIG' } and then post the CONFIG_JSON back. */ const PASSWORD = "ADMIN"; // replace before use const CLIENT_ID = 'REPLACE_WITH_YOUR_CLIENT_ID'; // The REDIRECT_URI must match the OAuth App callback and be reachable; oauth_callback.html included in project const REDIRECT_URI = location.origin + '/admin/oauth_callback.html'; const AUTHORIZE_URL_BASE = 'https://github.com/login/oauth/authorize'; const SCOPES = 'public_repo'; // use 'repo' if you need private repo access const pwInput = document.getElementById('pw'); const goBtn = document.getElementById('go'); const clearBtn = document.getElementById('clear'); const loginDiv = document.getElementById('login'); const frameContainer = document.getElementById('frameContainer'); const setupFrame = document.getElementById('setupFrame'); const connectBtn = document.getElementById('connectBtn'); const saveBtn = document.getElementById('saveBtn'); const controlsDiv = document.getElementById('controls'); const statusSpan = document.getElementById('status'); let oauthWindow = null; let latestConfigJson = null; function showFrame(){ loginDiv.classList.add('hidden'); frameContainer.classList.remove('hidden'); clearBtn.style.display = 'inline-block'; controlsDiv.classList.remove('hidden'); setupFrame.src = '../Setup.html'; checkAuthStatus(); } goBtn.addEventListener('click', ()=>{ if (pwInput.value === PASSWORD) { showFrame(); } else { alert('Incorrect password'); pwInput.value = ''; pwInput.focus(); } }); pwInput.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') goBtn.click(); }); clearBtn.addEventListener('click', ()=>{ setupFrame.src = ''; frameContainer.classList.add('hidden'); loginDiv.classList.remove('hidden'); pwInput.value = ''; clearBtn.style.display = 'none'; controlsDiv.classList.add('hidden'); statusSpan.textContent = ''; }); // --- OAuth popup flow --- connectBtn.addEventListener('click', () => { const state = Math.random().toString(36).slice(2); // minimal CSRF token sessionStorage.setItem('gh_oauth_state', state); const url = `${AUTHORIZE_URL_BASE}?client_id=${encodeURIComponent(CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent(SCOPES)}&state=${encodeURIComponent(state)}`; oauthWindow = window.open(url, 'github_oauth', 'width=720,height=720'); // focus and message-based callback handled by message listener below (oauth_callback posts the code to opener) }); // Listen for messages from the popup (oauth_callback.html will post { type:'github_oauth', code, state }) window.addEventListener('message', async (ev) => { // ensure origin matches (or check ev.origin if you want strict checking) const msg = ev.data || {}; if (msg.type === 'github_oauth') { const savedState = sessionStorage.getItem('gh_oauth_state'); if (!savedState || savedState !== msg.state) { alert('OAuth state mismatch. Try again.'); return; } try { statusSpan.textContent = 'Exchanging code...'; // Send code to backend to exchange const resp = await fetch('/auth/exchange', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: msg.code }) }); const data = await resp.json(); if (data.ok) { statusSpan.textContent = 'Connected to GitHub as ' + (data.user ? data.user.login : 'unknown'); saveBtn.disabled = false; } else { statusSpan.textContent = 'Auth failed: ' + (data.error || 'unknown'); } } catch (e) { statusSpan.textContent = 'Network error during auth'; console.error(e); } finally { sessionStorage.removeItem('gh_oauth_state'); if (oauthWindow && !oauthWindow.closed) oauthWindow.close(); } } else if (msg.type === 'CONFIG_JSON') { // Received config JSON from iframe latestConfigJson = msg.json; // auto-send to server if a save was pending if (saveBtn.dataset.pending === '1') { doSaveToServer(latestConfigJson); } } }); // Ask the iframe to post its config (the iframe must respond by posting CONFIG_JSON with the JSON) saveBtn.addEventListener('click', async () => { if (!latestConfigJson) { // request config from iframe saveBtn.dataset.pending = '1'; setupFrame.contentWindow.postMessage({ type: 'REQUEST_CONFIG' }, '*'); statusSpan.textContent = 'Requesting config from Setup...'; // doSaveToServer will be called when CONFIG_JSON arrives return; } doSaveToServer(latestConfigJson); }); async function doSaveToServer(jsonObj) { try { saveBtn.disabled = true; saveBtn.dataset.pending = '0'; statusSpan.textContent = 'Saving...'; const resp = await fetch('/save-config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ json: jsonObj, path: 'config.json', commitMessage: 'Update config.json via Admin app', preferPRWhenProtected: true }) }); const result = await resp.json(); if (result.ok) { statusSpan.textContent = 'Saved: ' + (result.prUrl ? result.prUrl : `branch ${result.branch}`); } else { statusSpan.textContent = 'Save failed: ' + (result.error || 'unknown'); } } catch (e) { statusSpan.textContent = 'Network error during save'; console.error(e); } finally { saveBtn.disabled = false; } } // Poll server for auth status (on load/show frame) to re-enable Save if session already exists async function checkAuthStatus() { try { const resp = await fetch('/auth/status', { credentials: 'same-origin' }); const data = await resp.json(); if (data.authenticated) { statusSpan.textContent = 'Connected to GitHub as ' + (data.user ? data.user.login : 'unknown'); saveBtn.disabled = false; } else { statusSpan.textContent = 'Not connected'; saveBtn.disabled = true; } } catch (e) { statusSpan.textContent = 'Auth check failed'; console.error(e); } } </script> </body> </html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin — Setup</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 1rem;
+      background: #f7f7f8;
+      color: #111;
+    }
+    h1 {
+      font-size: 1.1rem;
+      margin: 0 0 1rem;
+      text-align: center;
+    }
+    #login {
+      max-width: 520px;
+      margin: 1.5rem auto;
+      padding: 1rem;
+      border: 1px solid #e2e2e2;
+      border-radius: 8px;
+      background: #fff;
+    }
+    label {
+      display: block;
+      margin-bottom: .75rem;
+    }
+    input[type=password] {
+      width: 100%;
+      padding: .5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-top: .5rem;
+      padding: .45rem .75rem;
+      border-radius: 4px;
+      border: 1px solid #bbb;
+      background: #f3f3f3;
+      cursor: pointer;
+    }
+    #frameContainer {
+      max-width: 100%;
+      margin: 1rem auto;
+    }
+    iframe {
+      width: 100%;
+      height: 70vh;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    .hidden {
+      display: none;
+    }
+    p.note {
+      color: #666;
+      font-size: 0.9rem;
+      margin-top: .75rem;
+    }
+    #controls {
+      max-width: 520px;
+      margin: 0.5rem auto;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Admin — Setup</h1>
+  <div id="login">
+    <label for="pw">
+      Password:
+      <input id="pw" type="password" autocomplete="current-password" placeholder="Enter admin password">
+    </label>
+    <div>
+      <button id="go">Enter</button>
+      <button id="clear" style="display:none">Logout</button>
+    </div>
+    <p class="note">
+      This admin page is intentionally not linked from the site. It uses client-side password gating only — NOT secure.
+      Replace the PASSWORD constant in this file before use.
+    </p>
+  </div>
+
+  <div id="frameContainer" class="hidden">
+    <div id="controls" class="hidden">
+      <button id="connectBtn">Connect with GitHub</button>
+      <button id="saveBtn" disabled>Save to GitHub</button>
+      <span id="status" style="margin-left:.5rem;color:#666"></span>
+    </div>
+    <iframe id="setupFrame" src="" title="Setup"></iframe>
+  </div>
+
+  <script>
+    /*
+      OAuth flow (popup + code exchange):
+      - Register an OAuth App with redirect_uri pointing to /admin/oauth_callback.html
+      - Edit CLIENT_ID and REDIRECT_URI below to match your OAuth App / host
+      - Backend endpoints:
+        POST /auth/exchange { code } -> exchanges code, stores token in server session
+        GET /auth/status -> returns { authenticated: true/false, user: {login} }
+        POST /save-config -> server-side commit using token in session
+
+      - The Setup iframe should provide a way to supply the JSON config to its parent, for example:
+        window.parent.postMessage({ type: 'CONFIG_JSON', json: yourConfigObject }, '*')
+        Or respond to a request message from parent: { type: 'REQUEST_CONFIG' }
+        and then post the CONFIG_JSON back.
+    */
+    const PASSWORD = "ADMIN"; // replace before use
+    const CLIENT_ID = 'REPLACE_WITH_YOUR_CLIENT_ID'; // Edit as needed
+    const REDIRECT_URI = location.origin + '/admin/oauth_callback.html';
+    const AUTHORIZE_URL_BASE = 'https://github.com/login/oauth/authorize';
+    const SCOPES = 'public_repo'; // use 'repo' for private repo access
+
+    const pwInput = document.getElementById('pw');
+    const goBtn = document.getElementById('go');
+    const clearBtn = document.getElementById('clear');
+    const loginDiv = document.getElementById('login');
+    const frameContainer = document.getElementById('frameContainer');
+    const setupFrame = document.getElementById('setupFrame');
+    const connectBtn = document.getElementById('connectBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const controlsDiv = document.getElementById('controls');
+    const statusSpan = document.getElementById('status');
+    let oauthWindow = null;
+    let latestConfigJson = null;
+
+    function showFrame() {
+      loginDiv.classList.add('hidden');
+      frameContainer.classList.remove('hidden');
+      clearBtn.style.display = 'inline-block';
+      controlsDiv.classList.remove('hidden');
+      setupFrame.src = '../Setup.html';
+      checkAuthStatus();
+    }
+
+    goBtn.addEventListener('click', () => {
+      if (pwInput.value === PASSWORD) {
+        showFrame();
+      } else {
+        alert('Incorrect password');
+        pwInput.value = '';
+        pwInput.focus();
+      }
+    });
+
+    pwInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') goBtn.click();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      setupFrame.src = '';
+      frameContainer.classList.add('hidden');
+      loginDiv.classList.remove('hidden');
+      pwInput.value = '';
+      clearBtn.style.display = 'none';
+      controlsDiv.classList.add('hidden');
+      statusSpan.textContent = '';
+    });
+
+    // --- OAuth popup flow ---
+    connectBtn.addEventListener('click', () => {
+      const state = Math.random().toString(36).slice(2); // minimal CSRF token
+      sessionStorage.setItem('gh_oauth_state', state);
+      const url = `${AUTHORIZE_URL_BASE}?client_id=${encode
+

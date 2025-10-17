@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin — Setup</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;padding:1rem;background:#f7f7f8;color:#111}
+    h1{font-size:1.1rem;margin:0 0 1rem;text-align:center}
+    #login{max-width:520px;margin:1.5rem auto;padding:1rem;border:1px solid #e2e2e2;border-radius:8px;background:#fff}
+    label{display:block;margin-bottom:.75rem}
+    input[type=password]{width:100%;padding:.5rem;border:1px solid #ccc;border-radius:4px}
+    button{margin-top:.5rem;padding:.45rem .75rem;border-radius:4px;border:1px solid #bbb;background:#f3f3f3;cursor:pointer}
+    #frameContainer{max-width:100%;margin:1rem auto}
+    iframe{width:100%;height:78vh;border:1px solid #ddd;border-radius:6px}
+    .hidden{display:none}
+    p.note{color:#666;font-size:0.9rem;margin-top:.75rem}
+  </style>
+</head>
+<body>
+  <h1>Admin — Setup</h1>
+  <div id="login">
+    <label for="pw">Password:
+      <input id="pw" type="password" autocomplete="current-password" placeholder="Enter admin password">
+    </label>
+    <div>
+      <button id="go">Enter</button>
+      <button id="clear" style="display:none">Logout</button>
+    </div>
+    <p class="note">This admin page is intentionally not linked from the site. It uses client-side password gating only — NOT secure. Replace the PASSWORD constant in this file before use.</p>
+  </div>
+
+  <div id="frameContainer" class="hidden">
+    <iframe id="setupFrame" src="" title="Setup"></iframe>
+  </div>
+
+  <script>
+  /*
+    NOTE: CLIENT-SIDE ONLY — This is NOT a secure access control mechanism. Anyone who knows the URL or inspects this file can see or change the password.
+    For real protection use server-side auth (Basic Auth), Cloudflare Access, Netlify/Vercel auth, or a custom backend.
+
+    To use: edit this file and replace the value of PASSWORD below with a strong secret.
+    The iframe will load ../Setup.html (adjust the path if your Setup.html is elsewhere).
+  */
+  const PASSWORD = "REPLACE_WITH_STRONG_PASSWORD";
+
+  const pwInput = document.getElementById('pw');
+  const goBtn = document.getElementById('go');
+  const clearBtn = document.getElementById('clear');
+  const loginDiv = document.getElementById('login');
+  const frameContainer = document.getElementById('frameContainer');
+  const setupFrame = document.getElementById('setupFrame');
+
+  function showFrame(){
+    loginDiv.classList.add('hidden');
+    frameContainer.classList.remove('hidden');
+    clearBtn.style.display = 'inline-block';
+    // adjust the path to Setup.html if needed
+    setupFrame.src = '../Setup.html';
+  }
+
+  goBtn.addEventListener('click', ()=>{
+    if (pwInput.value === PASSWORD) {
+      showFrame();
+    } else {
+      alert('Incorrect password');
+      pwInput.value = '';
+      pwInput.focus();
+    }
+  });
+
+  pwInput.addEventListener('keydown', (e)=>{
+    if (e.key === 'Enter') goBtn.click();
+  });
+
+  clearBtn.addEventListener('click', ()=>{
+    setupFrame.src = '';
+    frameContainer.classList.add('hidden');
+    loginDiv.classList.remove('hidden');
+    pwInput.value = '';
+    clearBtn.style.display = 'none';
+  });
+  </script>
+</body>
+</html>

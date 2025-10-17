@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Setup - Digital Transformation Change Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .setup-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .setup-section {
+            background: #f8f9ff;
+            border: 2px solid #e1e8ff;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .setup-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e1e8ff;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .instructor-settings {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .instructor-settings h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .scenario-list {
+            margin-top: 20px;
+        }
+
+        .scenario-item {
+            background: white;
+            border: 1px solid #e1e8ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .scenario-item h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .scenario-item p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .scenario-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .export-section {
+            background: #e8f5e8;
+            border: 2px solid #c3e6c3;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .export-section h3 {
+            color: #2d5a2d;
+            margin-bottom: 15px;
+        }
+
+        .json-output {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e1e8ff;
+        }
+
+        .navigation a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 15px;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        .starting-values {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .starting-values .form-group {
+            margin-bottom: 0;
+        }
+
+        .starting-values input {
+            text-align: center;
+        }
+
+        .instructions {
+            background: #d1ecf1;
+            border: 2px solid #bee5eb;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            color: #0c5460;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            color: #0c5460;
+        }
+
+        .file-input {
+            margin: 10px 0;
+        }
+
+        .file-input input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #e1e8ff;
+            border-radius: 8px;
+            background: #f8f9ff;
+        }
+
+        .download-section {
+            background: #f8f9ff;
+            border: 2px solid #e1e8ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .download-section h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .download-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .download-options label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .download-options input[type="text"] {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 12px;
+            border: 2px solid #e1e8ff;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-cogs"></i> Simulation Setup</h1>
+            <p>Configure scenarios, dilemmas, and settings for your digital transformation simulation</p>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> How to Use</h3>
+            <ol>
+                <li>Configure your simulation settings and scenarios below</li>
+                <li>Choose your download method (automatic or choose location)</li>
+                <li>Generate and save the <code>simulation-config.json</code> file</li>
+                <li>Place the JSON file in the same folder as your <code>index.html</code></li>
+                <li>Open <code>index.html</code> - it will automatically load your configuration</li>
+            </ol>
+        </div>
+
+        <!-- Instructor Settings -->
+        <div class="instructor-settings">
+            <h3><i class="fas fa-chalkboard-teacher"></i> Instructor Settings</h3>
+            <div class="setup-sections">
+                <div class="setup-section">
+                    <h4>Student Controls</h4>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="allow-restart" checked>
+                        <label for="allow-restart">Allow student to restart at any point</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="allow-redo" checked>
+                        <label for="allow-redo">Allow student to go back and redo prior scenarios</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="hide-impacts" checked>
+                        <label for="hide-impacts">Hide point impacts before selection (show after choice)</label>
+                    </div>
+                </div>
+                
+                <div class="setup-section">
+                    <h4>Navigation Flow</h4>
+                    <div class="form-group">
+                        <label>After "Continue" button:</label>
+                        <select id="continue-flow">
+                            <option value="next-scenario">Go directly to next scenario</option>
+                            <option value="select-action">Return to Select Next Action page</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="setup-section">
+                    <h4>Starting Values</h4>
+                    <div class="starting-values">
+                        <div class="form-group">
+                            <label>Adoption Rate:</label>
+                            <input type="number" id="start-adoption" value="0" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Team Morale:</label>
+                            <input type="number" id="start-morale" value="100" min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>Project Progress:</label>
+                            <input type="number" id="start-project" value="0" min="0" max="100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="setup-sections">
+            <!-- Company Setup -->
+            <div class="setup-section">
+                <h3><i class="fas fa-building"></i> Company Setup</h3>
+                <div class="form-group">
+                    <label>Company Name:</label>
+                    <input type="text" id="company-name" value="TechCorp" placeholder="Enter company name">
+                </div>
+                <div class="form-group">
+                    <label>Industry:</label>
+                    <input type="text" id="company-industry" value="Manufacturing" placeholder="Enter industry">
+                </div>
+                <div class="form-group">
+                    <label>Investment Amount:</label>
+                    <input type="text" id="investment-amount" value="$2M" placeholder="Enter investment amount">
+                </div>
+                <div class="form-group">
+                    <label>Systems Being Implemented:</label>
+                    <input type="text" id="systems" value="ERP and CRM systems" placeholder="Enter systems">
+                </div>
+                <div class="form-group">
+                    <label>Target Adoption Rate:</label>
+                    <input type="number" id="target-adoption" value="80" min="0" max="100" placeholder="Target %">
+                </div>
+                <div class="form-group">
+                    <label>Timeline (months):</label>
+                    <input type="number" id="timeline" value="6" min="1" max="24" placeholder="Months">
+                </div>
+            </div>
+
+            <!-- Scenario Setup -->
+            <div class="setup-section">
+                <h3><i class="fas fa-plus-circle"></i> Add New Scenario</h3>
+                <div class="form-group">
+                    <label>Phase:</label>
+                    <select id="scenario-phase">
+                        <option value="assessment">Assessment</option>
+                        <option value="planning">Planning</option>
+                        <option value="communication">Communication</option>
+                        <option value="engagement">Stakeholder Engagement</option>
+                        <option value="monitoring">Monitoring</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Scenario Title:</label>
+                    <input type="text" id="scenario-title" placeholder="Enter scenario title">
+                </div>
+                <div class="form-group">
+                    <label>Scenario Description:</label>
+                    <textarea id="scenario-description" placeholder="Describe the dilemma or situation"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Choice 1:</label>
+                    <input type="text" id="choice1-text" placeholder="Choice description">
+                    <input type="text" id="choice1-impact" placeholder="Impact (e.g., Adoption +10, Morale -5)" style="margin-top: 5px;">
+                </div>
+                <div class="form-group">
+                    <label>Choice 2:</label>
+                    <input type="text" id="choice2-text" placeholder="Choice description">
+                    <input type="text" id="choice2-impact" placeholder="Impact (e.g., Adoption +10, Morale -5)" style="margin-top: 5px;">
+                </div>
+                <div class="form-group">
+                    <label>Choice 3:</label>
+                    <input type="text" id="choice3-text" placeholder="Choice description">
+                    <input type="text" id="choice3-impact" placeholder="Impact (e.g., Adoption +10, Morale -5)" style="margin-top: 5px;">
+                </div>
+                <button class="btn btn-primary" onclick="addScenario()">
+                    <i class="fas fa-plus"></i> Add Scenario
+                </button>
+            </div>
+
+            <!-- Feedback Setup -->
+            <div class="setup-section">
+                <h3><i class="fas fa-comments"></i> Feedback Messages</h3>
+                <div class="form-group">
+                    <label>Add Feedback Message:</label>
+                    <textarea id="feedback-message" placeholder="Enter a feedback message"></textarea>
+                </div>
+                <button class="btn btn-secondary" onclick="addFeedback()">
+                    <i class="fas fa-plus"></i> Add Feedback
+                </button>
+            </div>
+        </div>
+
+        <!-- Current Scenarios -->
+        <div class="setup-section">
+            <h3><i class="fas fa-list"></i> Current Scenarios</h3>
+            <div id="scenarios-list" class="scenario-list">
+                <!-- Scenarios will be populated here -->
+            </div>
+        </div>
+
+        <!-- Export Section -->
+        <div class="export-section">
+            <h3><i class="fas fa-download"></i> Generate Configuration</h3>
+            <p>Generate and save the JSON configuration file for your simulation:</p>
+            
+            <div id="json-output" class="json-output" style="display: none;">
+                <!-- JSON will be displayed here -->
+            </div>
+            
+            <!-- Download Options -->
+            <div class="download-section">
+                <h4><i class="fas fa-cog"></i> Download Options</h4>
+                <div class="download-options">
+                    <label>
+                        <input type="radio" name="download-method" value="auto" checked> 
+                        Automatic Download (to Downloads folder)
+                    </label>
+                    <label>
+                        <input type="radio" name="download-method" value="choose"> 
+                        Choose Save Location
+                    </label>
+                </div>
+                <div id="filename-section" style="margin-top: 10px;">
+                    <label>Filename:</label>
+                    <input type="text" id="config-filename" value="simulation-config.json" style="margin-left: 10px;">
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="btn btn-success" onclick="generateAndSaveConfig()">
+                    <i class="fas fa-file-download"></i> Generate & Save Configuration
+                </button>
+                <button class="btn btn-secondary" onclick="previewConfig()">
+                    <i class="fas fa-eye"></i> Preview JSON
+                </button>
+                <button class="btn btn-secondary" onclick="resetToDefaults()">
+                    <i class="fas fa-undo"></i> Reset to Defaults
+                </button>
+            </div>
+
+            <!-- Import Section -->
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #c3e6c3;">
+                <h4>Import Existing Configuration</h4>
+                <p>Load a previously saved configuration file:</p>
+                <div class="file-input">
+                    <input type="file" id="config-file" accept=".json" onchange="importConfig()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <a href="index.html"><i class="fas fa-play"></i> Run Simulation</a>
+            <a href="#" onclick="loadDefaultConfig()"><i class="fas fa-database"></i> Load Default Config</a>
+        </div>
+    </div>
+
+    <script>
+        // Default scenarios data
+        let scenarios = {
+            assessment: [
+                {
+                    title: "Resistance Assessment",
+                    description: "The IT department is showing strong resistance to the new ERP system. They claim it's too complex and will slow down operations. How do you respond?",
+                    choices: [
+                        { text: "Organize a detailed training session with IT leadership", impact: "Adoption +15, Morale +5, Project +10" },
+                        { text: "Implement the system gradually with IT input", impact: "Adoption +10, Morale +10, Project +5" },
+                        { text: "Proceed with implementation as planned", impact: "Adoption +5, Morale -10, Project +15" }
+                    ]
+                }
+            ],
+            planning: [
+                {
+                    title: "Timeline Pressure",
+                    description: "The board wants to accelerate the timeline by 2 months to meet quarterly targets. This would require cutting some training time. What's your decision?",
+                    choices: [
+                        { text: "Negotiate for additional resources to maintain quality", impact: "Adoption +20, Morale +10, Project +5" },
+                        { text: "Accept the timeline but extend training post-launch", impact: "Adoption +10, Morale +5, Project +20" },
+                        { text: "Agree to the accelerated timeline", impact: "Adoption +5, Morale -15, Project +25" }
+                    ]
+                }
+            ],
+            communication: [
+                {
+                    title: "Communication Crisis",
+                    description: "Rumors are spreading that the new system will lead to job cuts. Employee morale is plummeting. How do you address this?",
+                    choices: [
+                        { text: "Hold an all-hands meeting to address concerns transparently", impact: "Adoption +15, Morale +20, Project +10" },
+                        { text: "Send detailed email communications about job security", impact: "Adoption +10, Morale +10, Project +5" },
+                        { text: "Focus on technical training and ignore the rumors", impact: "Adoption +5, Morale -20, Project +15" }
+                    ]
+                }
+            ],
+            engagement: [
+                {
+                    title: "Key Champion Leaves",
+                    description: "Your main change champion from the operations team has resigned. This was a critical supporter who was driving adoption. How do you respond?",
+                    choices: [
+                        { text: "Quickly identify and train a new champion", impact: "Adoption +10, Morale +5, Project +10" },
+                        { text: "Distribute champion responsibilities across multiple people", impact: "Adoption +15, Morale +10, Project +5" },
+                        { text: "Continue without a dedicated champion", impact: "Adoption -5, Morale -10, Project +20" }
+                    ]
+                }
+            ],
+            monitoring: [
+                {
+                    title: "Performance Metrics",
+                    description: "Adoption rates are below target, but the system is working well for those using it. The board is questioning the investment. What's your strategy?",
+                    choices: [
+                        { text: "Implement additional incentives and recognition programs", impact: "Adoption +25, Morale +15, Project +10" },
+                        { text: "Focus on demonstrating ROI to the board", impact: "Adoption +10, Morale +5, Project +20" },
+                        { text: "Make system usage mandatory with consequences", impact: "Adoption +20, Morale -20, Project +15" }
+                    ]
+                }
+            ]
+        };
+
+        let feedbackMessages = [
+            "Excellent decision! The board is impressed with your strategic thinking and leadership approach.",
+            "Good choice. This shows thoughtful consideration of all stakeholders involved.",
+            "Interesting approach. The board has some concerns but appreciates your initiative.",
+            "The board is concerned about this direction. Consider the long-term implications.",
+            "This decision has raised some eyebrows. The board expects better results going forward."
+        ];
+
+        function addScenario() {
+            const phase = document.getElementById('scenario-phase').value;
+            const title = document.getElementById('scenario-title').value;
+            const description = document.getElementById('scenario-description').value;
+            const choice1Text = document.getElementById('choice1-text').value;
+            const choice1Impact = document.getElementById('choice1-impact').value;
+            const choice2Text = document.getElementById('choice2-text').value;
+            const choice2Impact = document.getElementById('choice2-impact').value;
+            const choice3Text = document.getElementById('choice3-text').value;
+            const choice3Impact = document.getElementById('choice3-impact').value;
+
+            if (!title || !description || !choice1Text || !choice1Impact) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            const scenario = {
+                title: title,
+                description: description,
+                choices: [
+                    { text: choice1Text, impact: choice1Impact },
+                    { text: choice2Text, impact: choice2Impact },
+                    { text: choice3Text, impact: choice3Impact }
+                ]
+            };
+
+            if (!scenarios[phase]) {
+                scenarios[phase] = [];
+            }
+            scenarios[phase].push(scenario);
+
+            // Clear form
+            document.getElementById('scenario-title').value = '';
+            document.getElementById('scenario-description').value = '';
+            document.getElementById('choice1-text').value = '';
+            document.getElementById('choice1-impact').value = '';
+            document.getElementById('choice2-text').value = '';
+            document.getElementById('choice2-impact').value = '';
+            document.getElementById('choice3-text').value = '';
+            document.getElementById('choice3-impact').value = '';
+
+            updateScenariosList();
+        }
+
+        function addFeedback() {
+            const message = document.getElementById('feedback-message').value;
+            if (!message) {
+                alert('Please enter a feedback message');
+                return;
+            }
+
+            feedbackMessages.push(message);
+            document.getElementById('feedback-message').value = '';
+        }
+
+        function updateScenariosList() {
+            const list = document.getElementById('scenarios-list');
+            list.innerHTML = '';
+
+            Object.keys(scenarios).forEach(phase => {
+                scenarios[phase].forEach((scenario, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'scenario-item';
+                    item.innerHTML = `
+                        <div>
+                            <h4>${scenario.title} (${phase})</h4>
+                            <p>${scenario.description.substring(0, 100)}...</p>
+                        </div>
+                        <div class="scenario-actions">
+                            <button class="btn btn-secondary btn-small" onclick="editScenario('${phase}', ${index})">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-secondary btn-small" onclick="deleteScenario('${phase}', ${index})">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    `;
+                    list.appendChild(item);
+                });
+            });
+        }
+
+        function deleteScenario(phase, index) {
+            if (confirm('Are you sure you want to delete this scenario?')) {
+                scenarios[phase].splice(index, 1);
+                updateScenariosList();
+            }
+        }
+
+        function editScenario(phase, index) {
+            const scenario = scenarios[phase][index];
+            
+            document.getElementById('scenario-phase').value = phase;
+            document.getElementById('scenario-title').value = scenario.title;
+            document.getElementById('scenario-description').value = scenario.description;
+            document.getElementById('choice1-text').value = scenario.choices[0].text;
+            document.getElementById('choice1-impact').value = scenario.choices[0].impact;
+            document.getElementById('choice2-text').value = scenario.choices[1].text;
+            document.getElementById('choice2-impact').value = scenario.choices[1].impact;
+            document.getElementById('choice3-text').value = scenario.choices[2].text;
+            document.getElementById('choice3-impact').value = scenario.choices[2].impact;
+
+            // Scroll to form
+            document.querySelector('.setup-section:nth-child(3)').scrollIntoView();
+        }
+
+        function generateConfig() {
+            const companyName = document.getElementById('company-name').value;
+            const companyIndustry = document.getElementById('company-industry').value;
+            const investmentAmount = document.getElementById('investment-amount').value;
+            const systems = document.getElementById('systems').value;
+            const targetAdoption = document.getElementById('target-adoption').value;
+            const timeline = document.getElementById('timeline').value;
+
+            // Get instructor settings
+            const instructorSettings = {
+                allowRestart: document.getElementById('allow-restart').checked,
+                allowRedo: document.getElementById('allow-redo').checked,
+                hideImpacts: document.getElementById('hide-impacts').checked,
+                continueFlow: document.getElementById('continue-flow').value,
+                startingValues: {
+                    adoption: parseInt(document.getElementById('start-adoption').value),
+                    morale: parseInt(document.getElementById('start-morale').value),
+                    project: parseInt(document.getElementById('start-project').value)
+                }
+            };
+
+            const config = {
+                company: {
+                    name: companyName,
+                    industry: companyIndustry,
+                    investment: investmentAmount,
+                    systems: systems,
+                    targetAdoption: parseInt(targetAdoption),
+                    timeline: parseInt(timeline)
+                },
+                instructorSettings: instructorSettings,
+                scenarios: scenarios,
+                feedbackMessages: feedbackMessages,
+                version: "1.0",
+                generatedAt: new Date().toISOString()
+            };
+
+            return config;
+        }
+
+        function previewConfig() {
+            const config = generateConfig();
+            const jsonOutput = document.getElementById('json-output');
+            jsonOutput.textContent = JSON.stringify(config, null, 2);
+            jsonOutput.style.display = 'block';
+        }
+
+        // Check if File System Access API is supported
+        function supportsFileSystemAccess() {
+            return 'showSaveFilePicker' in window;
+        }
+
+        async function generateAndSaveConfig() {
+            const config = generateConfig();
+            const configJson = JSON.stringify(config, null, 2);
+            const filename = document.getElementById('config-filename').value || 'simulation-config.json';
+            
+            const downloadMethod = document.querySelector('input[name="download-method"]:checked').value;
+            
+            if (downloadMethod === 'choose' && supportsFileSystemAccess()) {
+                // Use File System Access API (modern browsers)
+                try {
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: filename,
+                        types: [{
+                            description: 'JSON files',
+                            accept: {
+                                'application/json': ['.json']
+                            }
+                        }]
+                    });
+                    
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(configJson);
+                    await writable.close();
+                    
+                    alert('Configuration saved successfully!');
+                } catch (error) {
+                    if (error.name !== 'AbortError') {
+                        console.error('Error saving file:', error);
+                        alert('Error saving file. Falling back to automatic download.');
+                        downloadConfigAutomatic(configJson, filename);
+                    }
+                }
+            } else {
+                // Fallback to automatic download
+                downloadConfigAutomatic(configJson, filename);
+            }
+        }
+
+        function downloadConfigAutomatic(configJson, filename) {
+            const blob = new Blob([configJson], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert(`Configuration downloaded as ${filename}! Place it in the same folder as your index.html file.`);
+        }
+
+        function importConfig() {
+            const fileInput = document.getElementById('config-file');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    
+                    // Update company settings
+                    document.getElementById('company-name').value = config.company.name || 'TechCorp';
+                    document.getElementById('company-industry').value = config.company.industry || 'Manufacturing';
+                    document.getElementById('investment-amount').value = config.company.investment || '$2M';
+                    document.getElementById('systems').value = config.company.systems || 'ERP and CRM systems';
+                    document.getElementById('target-adoption').value = config.company.targetAdoption || 80;
+                    document.getElementById('timeline').value = config.company.timeline || 6;
+                    
+                    // Update instructor settings
+                    if (config.instructorSettings) {
+                        document.getElementById('allow-restart').checked = config.instructorSettings.allowRestart !== false;
+                        document.getElementById('allow-redo').checked = config.instructorSettings.allowRedo !== false;
+                        document.getElementById('hide-impacts').checked = config.instructorSettings.hideImpacts !== false;
+                        document.getElementById('continue-flow').value = config.instructorSettings.continueFlow || 'next-scenario';
+                        document.getElementById('start-adoption').value = config.instructorSettings.startingValues?.adoption || 0;
+                        document.getElementById('start-morale').value = config.instructorSettings.startingValues?.morale || 100;
+                        document.getElementById('start-project').value = config.instructorSettings.startingValues?.project || 0;
+                    }
+                    
+                    // Update scenarios and feedback
+                    scenarios = config.scenarios || scenarios;
+                    feedbackMessages = config.feedbackMessages || feedbackMessages;
+                    
+                    updateScenariosList();
+                    alert('Configuration imported successfully!');
+                } catch (error) {
+                    alert('Error importing configuration: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToDefaults() {
+            if (confirm('Are you sure you want to reset to default scenarios? This will clear all custom scenarios.')) {
+                location.reload();
+            }
+        }
+
+        function loadDefaultConfig() {
+            // Reset all fields to defaults
+            document.getElementById('company-name').value = 'TechCorp';
+            document.getElementById('company-industry').value = 'Manufacturing';
+            document.getElementById('investment-amount').value = '$2M';
+            document.getElementById('systems').value = 'ERP and CRM systems';
+            document.getElementById('target-adoption').value = 80;
+            document.getElementById('timeline').value = 6;
+            
+            document.getElementById('allow-restart').checked = true;
+            document.getElementById('allow-redo').checked = true;
+            document.getElementById('hide-impacts').checked = true;
+            document.getElementById('continue-flow').value = 'next-scenario';
+            document.getElementById('start-adoption').value = 0;
+            document.getElementById('start-morale').value = 100;
+            document.getElementById('start-project').value = 0;
+            
+            updateScenariosList();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateScenariosList();
+            
+            // Check if File System Access API is supported and show appropriate options
+            if (!supportsFileSystemAccess()) {
+                document.querySelector('input[value="choose"]').disabled = true;
+                document.querySelector('input[value="choose"]').nextSibling.textContent += ' (Not supported in this browser)';
+            }
+        });
+    </script>
+</body>
+</html>

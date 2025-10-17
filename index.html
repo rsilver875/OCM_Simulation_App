@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Transformation Change Management Simulation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Intro Screen -->
+        <div id="intro-screen" class="screen active">
+            <div class="container">
+                <div class="intro-content">
+                    <div class="logo">
+                        <i class="fas fa-chart-line"></i>
+                        <h1>Digital Transformation Challenge</h1>
+                    </div>
+                    <div class="scenario">
+                        <h2>Welcome, Project Manager</h2>
+                        <p>You've been appointed to lead a critical digital transformation project at TechCorp, a mid-sized manufacturing company. The board has invested $2M in new ERP and CRM systems, but resistance is mounting across departments.</p>
+                        
+                        <div class="challenge-box">
+                            <h3>Your Mission</h3>
+                            <ul>
+                                <li>Navigate 5 critical change management phases</li>
+                                <li>Handle resistance and stakeholder concerns</li>
+                                <li>Maintain team morale while driving adoption</li>
+                                <li>Achieve 80%+ adoption rate within 6 months</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="stats-preview">
+                            <div class="stat">
+                                <span class="stat-value">0%</span>
+                                <span class="stat-label">Adoption Rate</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">100%</span>
+                                <span class="stat-label">Team Morale</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-value">0%</span>
+                                <span class="stat-label">Project Progress</span>
+                            </div>
+                        </div>
+                        
+                        <button id="start-simulation" class="btn btn-primary">
+                            <i class="fas fa-play"></i>
+                            Start Simulation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="container">
+                <!-- Header with Progress Bars -->
+                <div class="game-header">
+                    <div class="progress-section">
+                        <div class="progress-item">
+                            <label>Adoption Rate</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="adoption-progress"></div>
+                                <span class="progress-text" id="adoption-text">0%</span>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <label>Team Morale</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="morale-progress"></div>
+                                <span class="progress-text" id="morale-text">100%</span>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <label>Project Progress</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="project-progress"></div>
+                                <span class="progress-text" id="project-text">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="score-section">
+                        <div class="score">
+                            <i class="fas fa-star"></i>
+                            <span id="total-score">0</span>
+                        </div>
+                        <div class="phase-indicator">
+                            Phase <span id="current-phase">1</span> of 5
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase Selection -->
+                <div id="phase-selection" class="phase-selection">
+                    <h2>Select Your Next Action</h2>
+                    <div class="phases-grid">
+                        <div class="phase-card" data-phase="assessment">
+                            <i class="fas fa-search"></i>
+                            <h3>Assessment</h3>
+                            <p>Analyze current state and resistance factors</p>
+                        </div>
+                        <div class="phase-card" data-phase="planning">
+                            <i class="fas fa-map"></i>
+                            <h3>Planning</h3>
+                            <p>Develop change strategy and timeline</p>
+                        </div>
+                        <div class="phase-card" data-phase="communication">
+                            <i class="fas fa-bullhorn"></i>
+                            <h3>Communication</h3>
+                            <p>Create awareness and build understanding</p>
+                        </div>
+                        <div class="phase-card" data-phase="engagement">
+                            <i class="fas fa-users"></i>
+                            <h3>Stakeholder Engagement</h3>
+                            <p>Involve key people in the change process</p>
+                        </div>
+                        <div class="phase-card" data-phase="monitoring">
+                            <i class="fas fa-chart-bar"></i>
+                            <h3>Monitoring</h3>
+                            <p>Track progress and adjust strategy</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dilemma Screen -->
+                <div id="dilemma-screen" class="dilemma-screen">
+                    <div class="dilemma-content">
+                        <h2 id="dilemma-title">Dilemma Encountered</h2>
+                        <p id="dilemma-description"></p>
+                        <div class="choices">
+                            <button class="choice-btn" data-choice="0">
+                                <span class="choice-text"></span>
+                                <span class="choice-impact"></span>
+                            </button>
+                            <button class="choice-btn" data-choice="1">
+                                <span class="choice-text"></span>
+                                <span class="choice-impact"></span>
+                            </button>
+                            <button class="choice-btn" data-choice="2">
+                                <span class="choice-text"></span>
+                                <span class="choice-impact"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Screen -->
+                <div id="feedback-screen" class="feedback-screen">
+                    <div class="feedback-content">
+                        <h2>Board Feedback</h2>
+                        <div class="feedback-message" id="feedback-message"></div>
+                        <div class="impact-summary">
+                            <h3>Impact Summary</h3>
+                            <div class="impact-changes" id="impact-changes"></div>
+                        </div>
+                        <button id="continue-btn" class="btn btn-primary">Continue</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <div class="container">
+                <div class="results-content">
+                    <h1>Simulation Complete!</h1>
+                    <div class="final-scores">
+                        <div class="score-card">
+                            <h3>Final Scores</h3>
+                            <div class="score-item">
+                                <span>Adoption Rate:</span>
+                                <span id="final-adoption">0%</span>
+                            </div>
+                            <div class="score-item">
+                                <span>Team Morale:</span>
+                                <span id="final-morale">0%</span>
+                            </div>
+                            <div class="score-item">
+                                <span>Project Progress:</span>
+                                <span id="final-project">0%</span>
+                            </div>
+                            <div class="score-item total">
+                                <span>Total Score:</span>
+                                <span id="final-total">0</span>
+                            </div>
+                        </div>
+                        <div class="badges-section">
+                            <h3>Achievements</h3>
+                            <div class="badges" id="badges-container"></div>
+                        </div>
+                    </div>
+                    <div class="performance-review" id="performance-review"></div>
+                    <div class="leaderboard">
+                        <h3>Leaderboard</h3>
+                        <div class="leaderboard-list" id="leaderboard-list"></div>
+                        <div class="save-score">
+                            <input type="text" id="player-name" placeholder="Enter your name">
+                            <button id="save-score-btn" class="btn btn-secondary">Save Score</button>
+                        </div>
+                    </div>
+                    <button id="restart-btn" class="btn btn-primary">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

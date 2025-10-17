@@ -1,0 +1,132 @@
+{
+  "company": {
+    "name": "TechCorp",
+    "industry": "Manufacturing",
+    "investment": "$2M",
+    "systems": "ERP and CRM systems",
+    "targetAdoption": 80,
+    "timeline": 6
+  },
+  "instructorSettings": {
+    "allowRestart": true,
+    "allowRedo": true,
+    "hideImpacts": true,
+    "continueFlow": "next-scenario",
+    "startingValues": {
+      "adoption": 20,
+      "morale": 70,
+      "project": 2
+    }
+  },
+  "scenarios": {
+    "assessment": [
+      {
+        "title": "Resistance Assessment",
+        "description": "The IT department is showing strong resistance to the new ERP system. They claim it's too complex and will slow down operations. How do you respond?",
+        "choices": [
+          {
+            "text": "Organize a detailed training session with IT leadership",
+            "impact": "Adoption +15, Morale +5, Project +10"
+          },
+          {
+            "text": "Implement the system gradually with IT input",
+            "impact": "Adoption +10, Morale +10, Project +5"
+          },
+          {
+            "text": "Proceed with implementation as planned",
+            "impact": "Adoption +5, Morale -10, Project +15"
+          }
+        ]
+      }
+    ],
+    "planning": [
+      {
+        "title": "Timeline Pressure",
+        "description": "The board wants to accelerate the timeline by 2 months to meet quarterly targets. This would require cutting some training time. What's your decision?",
+        "choices": [
+          {
+            "text": "Negotiate for additional resources to maintain quality",
+            "impact": "Adoption +20, Morale +10, Project +5"
+          },
+          {
+            "text": "Accept the timeline but extend training post-launch",
+            "impact": "Adoption +10, Morale +5, Project +20"
+          },
+          {
+            "text": "Agree to the accelerated timeline",
+            "impact": "Adoption +5, Morale -15, Project +25"
+          }
+        ]
+      }
+    ],
+    "communication": [
+      {
+        "title": "Communication Crisis",
+        "description": "Rumors are spreading that the new system will lead to job cuts. Employee morale is plummeting. How do you address this?",
+        "choices": [
+          {
+            "text": "Hold an all-hands meeting to address concerns transparently",
+            "impact": "Adoption +15, Morale +20, Project +10"
+          },
+          {
+            "text": "Send detailed email communications about job security",
+            "impact": "Adoption +10, Morale +10, Project +5"
+          },
+          {
+            "text": "Focus on technical training and ignore the rumors",
+            "impact": "Adoption +5, Morale -20, Project +15"
+          }
+        ]
+      }
+    ],
+    "engagement": [
+      {
+        "title": "Key Champion Leaves",
+        "description": "Your main change champion from the operations team has resigned. This was a critical supporter who was driving adoption. How do you respond?",
+        "choices": [
+          {
+            "text": "Quickly identify and train a new champion",
+            "impact": "Adoption +10, Morale +5, Project +10"
+          },
+          {
+            "text": "Distribute champion responsibilities across multiple people",
+            "impact": "Adoption +15, Morale +10, Project +5"
+          },
+          {
+            "text": "Continue without a dedicated champion",
+            "impact": "Adoption -5, Morale -10, Project +20"
+          }
+        ]
+      }
+    ],
+    "monitoring": [
+      {
+        "title": "Performance Metrics",
+        "description": "Adoption rates are below target, but the system is working well for those using it. The board is questioning the investment. What's your strategy?",
+        "choices": [
+          {
+            "text": "Implement additional incentives and recognition programs",
+            "impact": "Adoption +25, Morale +15, Project +10"
+          },
+          {
+            "text": "Focus on demonstrating ROI to the board",
+            "impact": "Adoption +10, Morale +5, Project +20"
+          },
+          {
+            "text": "Make system usage mandatory with consequences",
+            "impact": "Adoption +20, Morale -20, Project +15"
+          }
+        ]
+      }
+    ]
+  },
+  "feedbackMessages": [
+    "Excellent decision! The board is impressed with your strategic thinking and leadership approach.",
+    "Good choice. This shows thoughtful consideration of all stakeholders involved.",
+    "Interesting approach. The board has some concerns but appreciates your initiative.",
+    "The board is concerned about this direction. Consider the long-term implications.",
+    "This decision has raised some eyebrows. The board expects better results going forward."
+  ],
+  "version": "1.0",
+  "generatedAt": "2025-10-13T23:13:26.076Z"
+}
